@@ -1,0 +1,3120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusEvents - College Event Management</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #8A2BE2;
+            --primary-dark: #6A1B9A;
+            --secondary: #121212;
+            --light: #FFFFFF;
+            --gray: #F5F5F5;
+            --text: #333333;
+            --success: #4CAF50;
+            --warning: #FF9800;
+            --danger: #f44336;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--secondary);
+            color: var(--light);
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            color: var(--primary);
+            font-size: 1.8rem;
+        }
+
+        .logo h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary);
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.5rem 1.2rem;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            font-size: 0.9rem;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--light);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: var(--light);
+            border: none;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: var(--light);
+            border: none;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: var(--light);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: var(--light);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+            color: var(--light);
+            padding: 4rem 0;
+            text-align: center;
+        }
+
+        .hero h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .search-bar {
+            flex: 1;
+            display: flex;
+            position: relative;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            border: none;
+            border-radius: 4px 0 0 4px;
+            font-size: 1rem;
+        }
+
+        .search-bar button {
+            background: var(--primary);
+            color: var(--light);
+            border: none;
+            padding: 0 1.5rem;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+        }
+
+        .calendar-btn {
+            background: var(--primary-dark);
+            color: var(--light);
+            border: none;
+            padding: 0 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .calendar-btn:hover {
+            background: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .calendar-btn i {
+            font-size: 1.2rem;
+        }
+
+        /* Calendar Modal */
+        .calendar-modal {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--light);
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            margin-top: 0.5rem;
+            padding: 1rem;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding: 0 1rem;
+        }
+
+        .calendar-header h4 {
+            margin: 0;
+            flex: 1;
+            text-align: center;
+            color: var(--secondary);
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .calendar-header button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s;
+        }
+
+        .calendar-header button:hover {
+            background: var(--primary-dark);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.5rem;
+        }
+
+        .calendar-day {
+            padding: 0.5rem;
+            text-align: center;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: var(--text);
+        }
+
+        .calendar-day:hover {
+            background: var(--primary);
+            color: var(--light);
+        }
+
+        .calendar-day.selected {
+            background: var(--primary);
+            color: var(--light);
+        }
+
+        /* Events Section */
+        .section-title {
+            text-align: center;
+            margin: 3rem 0 1.5rem;
+            font-size: 2rem;
+            color: var(--secondary);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .filters {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1.5rem;
+            background: var(--gray);
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-btn.active {
+            background: var(--primary);
+            color: var(--light);
+        }
+
+        /* 3x3 Events Grid */
+        .events-grid-container {
+            position: relative;
+            margin-bottom: 3rem;
+        }
+
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .event-card {
+            background: var(--light);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+            position: relative;
+        }
+
+        .event-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .event-image {
+            height: 180px;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--light);
+            font-size: 3rem;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .event-content {
+            padding: 1.5rem;
+        }
+
+        .event-date {
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .event-registration-deadline {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .event-title {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: var(--secondary);
+        }
+
+        .event-location {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 1rem;
+            color: #666;
+        }
+
+        .event-audience {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .event-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .event-registered {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Grid Navigation */
+        .grid-navigation {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .grid-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: all 0.3s;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .grid-btn:hover {
+            background: var(--primary-dark);
+            transform: scale(1.1);
+        }
+
+        .grid-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .page-indicator {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        /* Unregister button hover effect */
+        .unregister-hover {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .unregister-hover .btn-text {
+            display: block;
+            transition: opacity 0.3s;
+        }
+
+        .unregister-hover .hover-text {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--danger);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .unregister-hover:hover .btn-text {
+            opacity: 0;
+        }
+
+        .unregister-hover:hover .hover-text {
+            opacity: 1;
+        }
+
+        /* My Events Section */
+        .my-events-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .my-event-card {
+            background: var(--light);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+            position: relative;
+        }
+
+        .my-event-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .my-event-card.past-event {
+            opacity: 0.7;
+        }
+
+        /* Custom Alert Modal */
+        .custom-alert {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .alert-content {
+            background: var(--light);
+            width: 90%;
+            max-width: 400px;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .alert-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .alert-title {
+            font-size: 1.5rem;
+            color: var(--secondary);
+            margin-bottom: 1rem;
+        }
+
+        .alert-message {
+            color: var(--text);
+            margin-bottom: 2rem;
+            line-height: 1.5;
+        }
+
+        .alert-ok-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .alert-ok-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Time Grid Styles */
+        .time-grid-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .time-section {
+            background: var(--gray);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+        .time-section label {
+            font-weight: 600;
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .time-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 0.5rem;
+            align-items: start;
+        }
+
+        .time-column {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .time-header {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #666;
+            text-align: center;
+        }
+
+        .time-select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            background: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .time-select:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.1);
+        }
+
+        .time-select:hover {
+            border-color: var(--primary);
+        }
+
+        .datetime-group {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        /* Registration Form */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--light);
+            width: 90%;
+            max-width: 500px;
+            border-radius: 8px;
+            padding: 2rem;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .form-title {
+            margin-bottom: 1.5rem;
+            color: var(--secondary);
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .file-upload {
+            border: 2px dashed #ddd;
+            border-radius: 4px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.3s;
+            background: #f9f9f9;
+        }
+
+        .file-upload:hover {
+            border-color: var(--primary);
+            background: #f0f0f0;
+        }
+
+        .file-upload.dragover {
+            border-color: var(--primary);
+            background: #e8f4f8;
+        }
+
+        .file-upload i {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .file-upload input {
+            display: none;
+        }
+
+        .image-preview {
+            margin-top: 1rem;
+            display: none;
+            text-align: center;
+        }
+
+        .image-preview img {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--secondary);
+            color: var(--light);
+            padding: 3rem 0 1.5rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-column h3 {
+            margin-bottom: 1.2rem;
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            color: #ccc;
+            font-size: 1.5rem;
+            transition: color 0.3s;
+        }
+
+        .social-links a:hover {
+            color: var(--primary);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .events-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .hero h2 {
+                font-size: 2rem;
+            }
+
+            .search-container {
+                flex-direction: column;
+            }
+
+            .calendar-btn {
+                border-radius: 4px;
+                margin-top: 0.5rem;
+            }
+
+            .events-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .my-events-container {
+                grid-template-columns: 1fr;
+            }
+
+            .datetime-group {
+                grid-template-columns: 1fr;
+            }
+
+            .grid-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-calendar-alt"></i>
+                    <h1>CampusEvents</h1>
+                </div>
+                <nav class="nav-links">
+                    <a href="#" class="active" id="homeLink">Home</a>
+                    <a href="#" id="myEventsLink">My Events</a>
+                </nav>
+                <div class="auth-buttons">
+                    <button class="btn btn-outline" id="loginBtn">Login</button>
+                    <button class="btn btn-primary" id="signupBtn">Sign Up</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="heroSection">
+        <div class="container">
+            <h2>Discover Amazing Campus Events</h2>
+            <p>Find, register, and manage all college events in one place. From workshops to social gatherings, never miss out again.</p>
+            <div class="search-container">
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="Search for events...">
+                    <button id="searchBtn"><i class="fas fa-search"></i></button>
+                    <div class="calendar-modal" id="calendarModal">
+                        <div class="calendar-header">
+                            <button id="prevMonth"><i class="fas fa-chevron-left"></i></button>
+                            <h4 id="currentMonth">October 2025</h4>
+                            <button id="nextMonth"><i class="fas fa-chevron-right"></i></button>
+                        </div>
+                        <div class="calendar-grid" id="calendarGrid">
+                            <!-- Calendar days will be generated here -->
+                        </div>
+                    </div>
+                </div>
+                <button class="calendar-btn" id="calendarBtn">
+                    <i class="fas fa-calendar-alt"></i> Pick Date
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Events Section -->
+    <section class="container" id="eventsSection">
+        <div class="section-header">
+            <h2 class="section-title">Upcoming Events</h2>
+            <button class="btn btn-primary" id="createEventBtn" style="display: none;">
+                <i class="fas fa-plus"></i> Create Event
+            </button>
+        </div>
+        
+        <div class="filters">
+            <button class="filter-btn active" data-filter="all">All Events</button>
+            <button class="filter-btn" data-filter="Workshop">Workshops</button>
+            <button class="filter-btn" data-filter="Technical">Technical</button>
+            <button class="filter-btn" data-filter="Talk">Talk</button>
+            <button class="filter-btn" data-filter="Social">Social</button>
+            <button class="filter-btn" data-filter="Sports">Sports</button>
+        </div>
+
+        <div class="events-grid-container">
+            <div class="events-grid" id="eventsGrid">
+                <!-- Events will be dynamically loaded here in 3x3 grid -->
+            </div>
+            
+            <div class="grid-navigation">
+                <button class="grid-btn prev" id="prevPage">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <span class="page-indicator" id="pageIndicator">Page 1 of 1</span>
+                <button class="grid-btn next" id="nextPage">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- My Events Section -->
+    <section class="container" id="myEventsSection" style="display: none;">
+        <div class="section-header">
+            <h2 class="section-title" id="myEventsTitle">My Events</h2>
+        </div>
+        
+        <div class="filters">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="upcoming">Upcoming</button>
+            <button class="filter-btn" data-filter="past">Past</button>
+        </div>
+
+        <div class="my-events-container" id="myEventsContainer">
+            <!-- My events will be loaded here -->
+        </div>
+    </section>
+
+    <!-- Custom Alert Modal -->
+    <div class="custom-alert" id="organizerAlert">
+        <div class="alert-content">
+            <div class="alert-icon">
+                <i class="fas fa-exclamation-circle"></i>
+            </div>
+            <h3 class="alert-title">Access Restricted</h3>
+            <p class="alert-message">Organizers cannot register for events. Please login as an attendee to register for events.</p>
+            <button class="alert-ok-btn" id="alertOkBtn">OK</button>
+        </div>
+    </div>
+
+    <!-- Registration Modal -->
+    <div class="modal" id="registrationModal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2 class="form-title">Event Registration</h2>
+            <form id="registrationForm">
+                <div class="form-group">
+                    <label for="eventName">Event</label>
+                    <input type="text" id="eventName" class="form-control" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="fullName">Full Name</label>
+                    <input type="text" id="fullName" class="form-control" placeholder="Enter your full name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" class="form-control" placeholder="Enter your email" required>
+                </div>
+                
+                <!-- Other College Student Fields -->
+                <div class="form-group" id="otherCollegeFields" style="display: none;">
+                    <label for="collegeName">College Name</label>
+                    <input type="text" id="collegeName" class="form-control" placeholder="Enter your college name">
+                </div>
+                
+                <div class="form-group" id="studentIdGroup" style="display: none;">
+                    <label for="studentId">Student ID</label>
+                    <input type="text" id="studentId" class="form-control" placeholder="Enter your student ID">
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" id="cancelBtn">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Register</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Create Event Modal -->
+    <div class="modal" id="createEventModal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2 class="form-title">Create New Event</h2>
+            <form id="createEventForm">
+                <div class="form-group">
+                    <label for="eventTitle">Event Title</label>
+                    <input type="text" id="eventTitle" class="form-control" placeholder="Enter event title" required>
+                </div>
+                <div class="form-group">
+                    <label for="eventDescription">Description</label>
+                    <textarea id="eventDescription" class="form-control" placeholder="Describe your event..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Date & Time</label>
+                    <div class="datetime-group">
+                        <div>
+                            <label for="eventDate">Event Date</label>
+                            <input type="date" id="eventDate" class="form-control" required>
+                        </div>
+                        <div class="time-grid-container">
+                            <div class="time-section">
+                                <label>Start Time</label>
+                                <div class="time-grid">
+                                    <div class="time-column">
+                                        <div class="time-header">Hour</div>
+                                        <select id="startHour" class="time-select" required>
+                                            <option value="">Hour</option>
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
+                                            <option value="6">6</option>
+                                            <option value="7">7</option>
+                                            <option value="8">8</option>
+                                            <option value="9">9</option>
+                                            <option value="10">10</option>
+                                            <option value="11">11</option>
+                                            <option value="12">12</option>
+                                        </select>
+                                    </div>
+                                    <div class="time-column">
+                                        <div class="time-header">Minute</div>
+                                        <select id="startMinute" class="time-select" required>
+                                            <option value="">Min</option>
+                                            <option value="00">00</option>
+                                            <option value="15">15</option>
+                                            <option value="30">30</option>
+                                            <option value="45">45</option>
+                                        </select>
+                                    </div>
+                                    <div class="time-column">
+                                        <div class="time-header">AM/PM</div>
+                                        <select id="startPeriod" class="time-select" required>
+                                            <option value="">--</option>
+                                            <option value="AM">AM</option>
+                                            <option value="PM">PM</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="time-section">
+                                <label>End Time</label>
+                                <div class="time-grid">
+                                    <div class="time-column">
+                                        <div class="time-header">Hour</div>
+                                        <select id="endHour" class="time-select" required>
+                                            <option value="">Hour</option>
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
+                                            <option value="6">6</option>
+                                            <option value="7">7</option>
+                                            <option value="8">8</option>
+                                            <option value="9">9</option>
+                                            <option value="10">10</option>
+                                            <option value="11">11</option>
+                                            <option value="12">12</option>
+                                        </select>
+                                    </div>
+                                    <div class="time-column">
+                                        <div class="time-header">Minute</div>
+                                        <select id="endMinute" class="time-select" required>
+                                            <option value="">Min</option>
+                                            <option value="00">00</option>
+                                            <option value="15">15</option>
+                                            <option value="30">30</option>
+                                            <option value="45">45</option>
+                                        </select>
+                                    </div>
+                                    <div class="time-column">
+                                        <div class="time-header">AM/PM</div>
+                                        <select id="endPeriod" class="time-select" required>
+                                            <option value="">--</option>
+                                            <option value="AM">AM</option>
+                                            <option value="PM">PM</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="registrationDeadline">Registration Deadline</label>
+                    <input type="date" id="registrationDeadline" class="form-control" required>
+                    <small style="color: #666;">Registration will close at 12:00 AM on this date</small>
+                </div>
+                <div class="form-group">
+                    <label for="eventLocation">Location</label>
+                    <input type="text" id="eventLocation" class="form-control" placeholder="Enter event location" required>
+                </div>
+                <div class="form-group">
+                    <label for="eventCapacity">Capacity</label>
+                    <input type="number" id="eventCapacity" class="form-control" placeholder="Maximum attendees" min="1" max="5000" required>
+                    <small style="color: #666;">Maximum 5000 attendees allowed</small>
+                </div>
+                <div class="form-group">
+                    <label for="eventCategory">Category</label>
+                    <select id="eventCategory" class="form-control" required>
+                        <option value="">Select category</option>
+                        <option value="Workshop">Workshop</option>
+                        <option value="Technical">Technical</option>
+                        <option value="Talk">Talk</option>
+                        <option value="Social">Social</option>
+                        <option value="Sports">Sports</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="eventAudience">Who Can Attend</label>
+                    <select id="eventAudience" class="form-control" required>
+                        <option value="">Select audience</option>
+                        <option value="pillai_students">Pillai Students Only</option>
+                        <option value="college_students">College Students (Pillai + Other Colleges)</option>
+                        <option value="non_students">Non-College Students</option>
+                        <option value="all">All (Students + Non-Students)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Event Image</label>
+                    <div class="file-upload" id="imageUpload">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Click to upload event image</p>
+                        <p class="small">PNG, JPG up to 5MB</p>
+                        <input type="file" id="eventImage" accept="image/*">
+                    </div>
+                    <div class="image-preview" id="imagePreview">
+                        <img src="" alt="Preview">
+                        <button type="button" class="btn btn-outline" id="removeImage" style="margin-top: 0.5rem; display: none;">
+                            <i class="fas fa-times"></i> Remove Image
+                        </button>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" id="cancelCreateBtn">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Event</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Event Modal -->
+    <div class="modal" id="editEventModal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2 class="form-title">Edit Event</h2>
+            <form id="editEventForm">
+                <input type="hidden" id="editEventId">
+                <div class="form-group">
+                    <label for="editEventTitle">Event Title</label>
+                    <input type="text" id="editEventTitle" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="editEventDescription">Description</label>
+                    <textarea id="editEventDescription" class="form-control" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Date & Time</label>
+                    <div class="datetime-group">
+                        <div>
+                            <label for="editEventDate">Event Date</label>
+                            <input type="date" id="editEventDate" class="form-control" required>
+                        </div>
+                        <div class="time-grid-container">
+                            <div class="time-section">
+                                <label>Start Time</label>
+                                <div class="time-grid">
+                                    <div class="time-column">
+                                        <div class="time-header">Hour</div>
+                                        <select id="editStartHour" class="time-select" required>
+                                            <option value="">Hour</option>
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
+                                            <option value="6">6</option>
+                                            <option value="7">7</option>
+                                            <option value="8">8</option>
+                                            <option value="9">9</option>
+                                            <option value="10">10</option>
+                                            <option value="11">11</option>
+                                            <option value="12">12</option>
+                                        </select>
+                                    </div>
+                                    <div class="time-column">
+                                        <div class="time-header">Minute</div>
+                                        <select id="editStartMinute" class="time-select" required>
+                                            <option value="">Min</option>
+                                            <option value="00">00</option>
+                                            <option value="15">15</option>
+                                            <option value="30">30</option>
+                                            <option value="45">45</option>
+                                        </select>
+                                    </div>
+                                    <div class="time-column">
+                                        <div class="time-header">AM/PM</div>
+                                        <select id="editStartPeriod" class="time-select" required>
+                                            <option value="">--</option>
+                                            <option value="AM">AM</option>
+                                            <option value="PM">PM</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="time-section">
+                                <label>End Time</label>
+                                <div class="time-grid">
+                                    <div class="time-column">
+                                        <div class="time-header">Hour</div>
+                                        <select id="editEndHour" class="time-select" required>
+                                            <option value="">Hour</option>
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
+                                            <option value="6">6</option>
+                                            <option value="7">7</option>
+                                            <option value="8">8</option>
+                                            <option value="9">9</option>
+                                            <option value="10">10</option>
+                                            <option value="11">11</option>
+                                            <option value="12">12</option>
+                                        </select>
+                                    </div>
+                                    <div class="time-column">
+                                        <div class="time-header">Minute</div>
+                                        <select id="editEndMinute" class="time-select" required>
+                                            <option value="">Min</option>
+                                            <option value="00">00</option>
+                                            <option value="15">15</option>
+                                            <option value="30">30</option>
+                                            <option value="45">45</option>
+                                        </select>
+                                    </div>
+                                    <div class="time-column">
+                                        <div class="time-header">AM/PM</div>
+                                        <select id="editEndPeriod" class="time-select" required>
+                                            <option value="">--</option>
+                                            <option value="AM">AM</option>
+                                            <option value="PM">PM</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="editRegistrationDeadline">Registration Deadline</label>
+                    <input type="date" id="editRegistrationDeadline" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="editEventLocation">Location</label>
+                    <input type="text" id="editEventLocation" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="editEventCapacity">Capacity</label>
+                    <input type="number" id="editEventCapacity" class="form-control" min="1" max="5000" required>
+                </div>
+                <div class="form-group">
+                    <label for="editEventAudience">Who Can Attend</label>
+                    <select id="editEventAudience" class="form-control" required>
+                        <option value="pillai_students">Pillai Students Only</option>
+                        <option value="college_students">College Students (Pillai + Other Colleges)</option>
+                        <option value="non_students">Non-College Students</option>
+                        <option value="all">All (Students + Non-Students)</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" id="cancelEditBtn">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Event</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2 class="form-title">Login to CampusEvents</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" class="form-control" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" class="form-control" placeholder="Enter your password" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" id="cancelLoginBtn">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </div>
+                <p style="text-align: center; margin-top: 1rem;">
+                    Don't have an account? <a href="#" id="showSignup">Sign up</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div class="modal" id="signupModal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2 class="form-title">Join CampusEvents</h2>
+            <form id="signupForm">
+                <div class="form-group">
+                    <label for="signupName">Full Name</label>
+                    <input type="text" id="signupName" class="form-control" placeholder="Enter your full name" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupEmail">Email</label>
+                    <input type="email" id="signupEmail" class="form-control" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupPassword">Password</label>
+                    <input type="password" id="signupPassword" class="form-control" placeholder="Create a password" required>
+                </div>
+                <div class="form-group">
+                    <label for="userRole">I am a:</label>
+                    <select id="userRole" class="form-control" required>
+                        <option value="">Select your role</option>
+                        <option value="organizer">Event Organizer</option>
+                        <option value="pillai_student">Pillai College Student</option>
+                        <option value="other_student">Other College Student</option>
+                        <option value="non_student">Non-College Student</option>
+                    </select>
+                </div>
+                
+                <!-- Pillai College Student Fields -->
+                <div class="form-group" id="pillaiStudentFields" style="display: none;">
+                    <label for="pillaiStudentId">Student ID</label>
+                    <input type="text" id="pillaiStudentId" class="form-control" placeholder="Enter your Pillai student ID" required>
+                </div>
+                
+                <!-- Other College Student Fields -->
+                <div class="form-group" id="otherCollegeFieldsSignup" style="display: none;">
+                    <label for="collegeNameSignup">College Name</label>
+                    <input type="text" id="collegeNameSignup" class="form-control" placeholder="Enter your college name" required>
+                </div>
+                
+                <div class="form-group" id="otherStudentIdFields" style="display: none;">
+                    <label for="otherStudentId">Student ID</label>
+                    <input type="text" id="otherStudentId" class="form-control" placeholder="Enter your student ID" required>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" id="cancelSignupBtn">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Sign Up</button>
+                </div>
+                <p style="text-align: center; margin-top: 1rem;">
+                    Already have an account? <a href="#" id="showLogin">Login</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Follow Our Socials</h3>
+                    <p>Stay connected with us on social media</p>
+                    <div class="social-links">
+                        <a href="https://www.instagram.com/pillaiscollege" target="_blank"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.youtube.com/@PillaiGroupOnline" target="_blank"><i class="fab fa-youtube"></i></a>
+                        <a href="https://twitter.com/pillaicollege" target="_blank"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Contact Info</h3>
+                    <p><i class="fas fa-envelope"></i> events@gmail.com</p>
+                    <p><i class="fas fa-phone"></i>  12345-67890</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Student Center, Room 101</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Base URL for backend
+        const API_BASE = 'http://localhost:5000/api';
+
+        // Global variables
+        let currentUser = null;
+        let currentEvents = [];
+        let userRegistrations = [];
+        let userWaitlists = [];
+        let currentFilter = 'all';
+        let myEventsFilter = 'all';
+        
+        // Grid pagination variables
+        let currentPage = 0;
+        const EVENTS_PER_PAGE = 9;
+        let totalPages = 1;
+
+        // Calendar variables - Set to October 2025
+        let currentCalendarDate = new Date(2025, 9, 11); // October 11, 2025
+        let selectedDate = null;
+
+        // Authentication functions
+        async function loginUser(email, password) {
+            try {
+                const response = await fetch(`${API_BASE}/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    currentUser = result.user;
+                    updateUIForUser();
+                    alert('✅ Login successful!');
+                    document.getElementById('loginModal').style.display = 'none';
+                    await loadUserRegistrations();
+                    await loadUserWaitlists();
+                    await loadEvents();
+                    return true;
+                } else {
+                    alert('❌ ' + result.error);
+                    return false;
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                alert('❌ Login failed. Check backend connection!');
+                return false;
+            }
+        }
+
+        async function signupUser(userData) {
+            try {
+                // Validate required fields based on role
+                if (userData.role === 'pillai_student' && (!userData.studentId || userData.studentId.trim() === '')) {
+                    alert('❌ Student ID is required for Pillai students');
+                    return false;
+                }
+                
+                if (userData.role === 'other_student') {
+                    if (!userData.collegeName || userData.collegeName.trim() === '') {
+                        alert('❌ College name is required for other college students');
+                        return false;
+                    }
+                    if (!userData.studentId || userData.studentId.trim() === '') {
+                        alert('❌ Student ID is required for other college students');
+                        return false;
+                    }
+                }
+
+                const response = await fetch(`${API_BASE}/signup`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(userData)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    alert('✅ Account created successfully! Please login.');
+                    document.getElementById('signupModal').style.display = 'none';
+                    document.getElementById('loginModal').style.display = 'flex';
+                    return true;
+                } else {
+                    alert('❌ ' + result.error);
+                    return false;
+                }
+            } catch (error) {
+                console.error('Signup error:', error);
+                alert('❌ Signup failed. Check backend connection!');
+                return false;
+            }
+        }
+
+        function updateUIForUser() {
+            const authButtons = document.querySelector('.auth-buttons');
+            const createEventBtn = document.getElementById('createEventBtn');
+            
+            if (currentUser) {
+                // User is logged in
+                authButtons.innerHTML = `
+                    <span style="color: var(--light); margin-right: 1rem;">
+                        Welcome, ${currentUser.name} (${currentUser.role})
+                    </span>
+                    <button class="btn btn-outline" id="logoutBtn">Logout</button>
+                `;
+                
+                // Show create event button only for organizers
+                if (createEventBtn) {
+                    createEventBtn.style.display = currentUser.role === 'organizer' ? 'block' : 'none';
+                }
+                
+                // Add logout handler
+                document.getElementById('logoutBtn').addEventListener('click', logoutUser);
+            } else {
+                // User is not logged in
+                authButtons.innerHTML = `
+                    <button class="btn btn-outline" id="loginBtn">Login</button>
+                    <button class="btn btn-primary" id="signupBtn">Sign Up</button>
+                `;
+                
+                if (createEventBtn) {
+                    createEventBtn.style.display = 'none';
+                }
+                
+                // Re-add login/signup handlers
+                document.getElementById('loginBtn').addEventListener('click', () => {
+                    document.getElementById('loginModal').style.display = 'flex';
+                });
+                document.getElementById('signupBtn').addEventListener('click', () => {
+                    document.getElementById('signupModal').style.display = 'flex';
+                });
+            }
+        }
+
+        function logoutUser() {
+            currentUser = null;
+            userRegistrations = [];
+            userWaitlists = [];
+            updateUIForUser();
+            alert('Logged out successfully!');
+            showHomeSection();
+            loadEvents();
+        }
+
+        // Navigation functions
+        function showHomeSection() {
+            document.getElementById('eventsSection').style.display = 'block';
+            document.getElementById('myEventsSection').style.display = 'none';
+            document.getElementById('heroSection').style.display = 'block';
+            document.querySelectorAll('.nav-links a').forEach(link => link.classList.remove('active'));
+            document.getElementById('homeLink').classList.add('active');
+        }
+
+        function showMyEventsSection() {
+            if (!currentUser) {
+                alert('❌ Please login to view your events!');
+                document.getElementById('loginModal').style.display = 'flex';
+                return;
+            }
+            
+            // Update section title based on user role
+            const myEventsTitle = document.getElementById('myEventsTitle');
+            if (currentUser.role === 'organizer') {
+                myEventsTitle.textContent = 'Created Events';
+            } else {
+                myEventsTitle.textContent = 'Registered Events';
+            }
+            
+            document.getElementById('eventsSection').style.display = 'none';
+            document.getElementById('myEventsSection').style.display = 'block';
+            document.getElementById('heroSection').style.display = 'none';
+            document.querySelectorAll('.nav-links a').forEach(link => link.classList.remove('active'));
+            document.getElementById('myEventsLink').classList.add('active');
+            loadMyEvents();
+        }
+
+        // Load user registrations
+        async function loadUserRegistrations() {
+            if (!currentUser) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/user/registrations/${currentUser.user_id}`);
+                if (response.ok) {
+                    const result = await response.json();
+                    userRegistrations = result.registrations || [];
+                }
+            } catch (error) {
+                console.error('Error loading user registrations:', error);
+            }
+        }
+
+        // Load user waitlists
+        async function loadUserWaitlists() {
+            if (!currentUser) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/user/waitlists/${currentUser.user_id}`);
+                if (response.ok) {
+                    const result = await response.json();
+                    userWaitlists = result.waitlists || [];
+                }
+            } catch (error) {
+                console.error('Error loading user waitlists:', error);
+            }
+        }
+
+        // Calendar functions
+        function generateCalendar() {
+            const calendarGrid = document.getElementById('calendarGrid');
+            const currentMonthElement = document.getElementById('currentMonth');
+            
+            const year = currentCalendarDate.getFullYear();
+            const month = currentCalendarDate.getMonth();
+            
+            // Set current month text
+            currentMonthElement.textContent = currentCalendarDate.toLocaleDateString('en-US', { 
+                month: 'long', 
+                year: 'numeric' 
+            });
+            
+            // Clear previous calendar
+            calendarGrid.innerHTML = '';
+            
+            // Add day headers
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            days.forEach(day => {
+                const dayHeader = document.createElement('div');
+                dayHeader.className = 'calendar-day';
+                dayHeader.style.fontWeight = 'bold';
+                dayHeader.textContent = day;
+                calendarGrid.appendChild(dayHeader);
+            });
+            
+            // Get first day of month and days in month
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            
+            // Add empty cells for days before first day of month
+            for (let i = 0; i < firstDay; i++) {
+                const emptyCell = document.createElement('div');
+                emptyCell.className = 'calendar-day';
+                emptyCell.style.visibility = 'hidden';
+                calendarGrid.appendChild(emptyCell);
+            }
+            
+            // Add days of the month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day';
+                dayElement.textContent = day;
+                dayElement.style.color = 'var(--text)';
+                
+                const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                
+                // Check if this day is selected
+                if (selectedDate === dateString) {
+                    dayElement.classList.add('selected');
+                }
+                
+                dayElement.addEventListener('click', () => {
+                    selectDate(dateString);
+                });
+                
+                calendarGrid.appendChild(dayElement);
+            }
+        }
+
+        function selectDate(dateString) {
+            selectedDate = dateString;
+            generateCalendar();
+            searchEventsByDate(dateString);
+            document.getElementById('calendarModal').style.display = 'none';
+        }
+
+        function searchEventsByDate(dateString) {
+            const filteredEvents = currentEvents.filter(event => {
+                const eventDate = new Date(event.date).toISOString().split('T')[0];
+                return eventDate === dateString;
+            });
+            
+            displayEventsGrid(filteredEvents);
+        }
+
+        // Search events function
+        function searchEvents() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+            
+            if (!searchTerm) {
+                filterEvents();
+                return;
+            }
+
+            let filteredEvents = currentEvents.filter(event => {
+                // Search by event name
+                if (event.title.toLowerCase().includes(searchTerm)) {
+                    return true;
+                }
+                
+                // Search by category
+                if (event.category.toLowerCase().includes(searchTerm)) {
+                    return true;
+                }
+                
+                return false;
+            });
+
+            displayEventsGrid(filteredEvents);
+        }
+
+        // Load events from backend
+        async function loadEvents() {
+            try {
+                showLoading();
+                const response = await fetch(`${API_BASE}/events`);
+                
+                if (!response.ok) {
+                    throw new Error(`Backend error: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                currentEvents = data.events;
+                console.log('Events loaded from backend:', currentEvents);
+                
+                // Initialize grid with real data
+                filterEvents();
+                
+            } catch (error) {
+                console.error('Error loading events:', error);
+                showError('Failed to load events. Make sure backend is running on port 5000!');
+            }
+        }
+
+        function showLoading() {
+            const eventsGrid = document.getElementById('eventsGrid');
+            if (eventsGrid) {
+                eventsGrid.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; grid-column: 1 / -1;">
+                        <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: var(--primary);"></i>
+                        <p>Loading events from backend...</p>
+                    </div>
+                `;
+            }
+        }
+
+        function showError(message) {
+            const eventsGrid = document.getElementById('eventsGrid');
+            if (eventsGrid) {
+                eventsGrid.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; color: red; grid-column: 1 / -1;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 2rem;"></i>
+                        <p>${message}</p>
+                        <p><strong>Make sure you ran: python app.py in backend folder</strong></p>
+                        <button class="btn btn-primary" onclick="loadEvents()">Retry</button>
+                    </div>
+                `;
+            }
+        }
+
+        // Filter events by category
+        function filterEvents() {
+            const filteredEvents = currentEvents.filter(event => {
+                if (currentFilter === 'all') return true;
+                return event.category === currentFilter;
+            });
+            
+            displayEventsGrid(filteredEvents);
+        }
+
+        function displayEventsGrid(events) {
+            const eventsGrid = document.getElementById('eventsGrid');
+            const pageIndicator = document.getElementById('pageIndicator');
+            const prevBtn = document.getElementById('prevPage');
+            const nextBtn = document.getElementById('nextPage');
+            
+            if (!eventsGrid) return;
+            
+            // Clear existing content
+            eventsGrid.innerHTML = '';
+
+            if (events.length === 0) {
+                eventsGrid.innerHTML = `
+                    <div style="text-align: center; padding: 3rem; color: #666; grid-column: 1 / -1;">
+                        <i class="fas fa-calendar-times" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                        <h3>No events found</h3>
+                        <p>No ${currentFilter === 'all' ? '' : currentFilter.toLowerCase()} events available at the moment.</p>
+                    </div>
+                `;
+                pageIndicator.textContent = 'Page 1 of 1';
+                prevBtn.disabled = true;
+                nextBtn.disabled = true;
+                return;
+            }
+
+            // Calculate pagination
+            totalPages = Math.ceil(events.length / EVENTS_PER_PAGE);
+            currentPage = Math.min(currentPage, totalPages - 1);
+            
+            // Get events for current page
+            const startIndex = currentPage * EVENTS_PER_PAGE;
+            const endIndex = startIndex + EVENTS_PER_PAGE;
+            const pageEvents = events.slice(startIndex, endIndex);
+            
+            // Create event cards for current page
+            pageEvents.forEach(event => {
+                const eventCard = createEventCard(event);
+                eventsGrid.appendChild(eventCard);
+            });
+
+            // Fill empty slots to maintain grid layout
+            const emptySlots = EVENTS_PER_PAGE - pageEvents.length;
+            for (let i = 0; i < emptySlots; i++) {
+                const emptyCard = document.createElement('div');
+                emptyCard.className = 'event-card';
+                emptyCard.style.visibility = 'hidden';
+                eventsGrid.appendChild(emptyCard);
+            }
+
+            // Update pagination controls
+            pageIndicator.textContent = `Page ${currentPage + 1} of ${totalPages}`;
+            prevBtn.disabled = currentPage === 0;
+            nextBtn.disabled = currentPage === totalPages - 1;
+        }
+
+        function createEventCard(event) {
+            const card = document.createElement('div');
+            card.className = 'event-card';
+            
+            const isOrganizer = currentUser && currentUser.role === 'organizer' && event.organizer_id === currentUser.user_id;
+            const isRegistered = userRegistrations.some(reg => reg.event_id === event.event_id);
+            const isWaitlisted = userWaitlists.some(wait => wait.event_id === event.event_id);
+            
+            // Check if user can register based on audience
+            let canRegister = false;
+            if (currentUser) {
+                const userRole = currentUser.role;
+                const eventAudience = event.audience;
+                
+                if (eventAudience === 'all') {
+                    canRegister = userRole !== 'organizer';
+                } else if (eventAudience === 'pillai_students') {
+                    canRegister = userRole === 'pillai_student';
+                } else if (eventAudience === 'college_students') {
+                    canRegister = userRole === 'pillai_student' || userRole === 'other_student';
+                } else if (eventAudience === 'non_students') {
+                    canRegister = userRole === 'non_student';
+                }
+            }
+            
+            // Check registration status
+            const now = new Date();
+            const registrationDeadline = new Date(event.registration_deadline + 'T23:59:59');
+            const isRegistrationClosed = now > registrationDeadline;
+            const isEventFull = event.registered >= event.capacity;
+            
+            // Get audience display text
+            const audienceText = {
+                'pillai_students': 'Pillai Students Only',
+                'college_students': 'College Students',
+                'non_students': 'Non-College Students',
+                'all': 'Everyone'
+            }[event.audience] || 'Everyone';
+
+            card.innerHTML = `
+                <div class="event-image" style="background-color: var(--primary); ${event.image_url ? `background-image: url('${event.image_url}')` : ''}">
+                    ${!event.image_url ? `<i class="${event.icon || 'fas fa-calendar-alt'}"></i>` : ''}
+                </div>
+                <div class="event-content">
+                    <div class="event-date">
+                        <i class="far fa-calendar"></i> ${formatDate(event.date)}
+                        ${isOrganizer ? '<span style="color: var(--primary); margin-left: auto;">(Your Event)</span>' : ''}
+                    </div>
+                    ${!isRegistrationClosed ? `
+                        <div class="event-registration-deadline">
+                            <i class="far fa-clock"></i> Deadline: ${formatDate(event.registration_deadline)}
+                        </div>
+                    ` : ''}
+                    <h3 class="event-title">${event.title}</h3>
+                    <div class="event-location">
+                        <i class="fas fa-map-marker-alt"></i> ${event.location}
+                    </div>
+                    <p>${event.description}</p>
+                    <div class="event-audience">
+                        <i class="fas fa-users"></i> ${audienceText}
+                    </div>
+                    <div class="event-footer">
+                        <div class="event-registered">${event.registered}/${event.capacity} registered</div>
+                        <div class="event-actions">
+                            ${isOrganizer ? `
+                                <button class="btn btn-outline edit-btn" data-event-id="${event.event_id}" style="margin-right: 0.5rem;">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="btn btn-danger delete-btn" data-event-id="${event.event_id}">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            ` : `
+                                ${isRegistered ? `
+                                    <button class="btn btn-success unregister-hover unregister-btn" data-event-id="${event.event_id}">
+                                        <span class="btn-text"><i class="fas fa-check"></i> Registered</span>
+                                        <span class="hover-text"><i class="fas fa-times"></i> Unregister</span>
+                                    </button>
+                                ` : isWaitlisted ? `
+                                    <button class="btn btn-warning" style="cursor: default;">
+                                        <i class="fas fa-clock"></i> Waitlisted
+                                    </button>
+                                ` : `
+                                    ${isRegistrationClosed ? `
+                                        <button class="btn btn-outline" disabled style="opacity: 0.6;">
+                                            Registration Closed
+                                        </button>
+                                    ` : isEventFull ? `
+                                        <button class="btn btn-warning join-waitlist-btn" data-event-id="${event.event_id}" data-event-audience="${event.audience}" ${!canRegister ? 'disabled style="opacity: 0.6;"' : ''}>
+                                            Join Waitlist
+                                            ${!canRegister ? ' (Not Eligible)' : ''}
+                                        </button>
+                                    ` : `
+                                        <button class="btn btn-primary register-btn" data-event-id="${event.event_id}" data-event-audience="${event.audience}" ${!canRegister ? 'disabled style="opacity: 0.6;"' : ''}>
+                                            Register
+                                            ${!canRegister ? ' (Not Eligible)' : ''}
+                                        </button>
+                                    `}
+                                `}
+                            `}
+                        </div>
+                    </div>
+                </div>
+            `;
+            return card;
+        }
+
+        // Grid navigation functions
+        function nextPage() {
+            if (currentPage < totalPages - 1) {
+                currentPage++;
+                filterEvents();
+            }
+        }
+
+        function prevPage() {
+            if (currentPage > 0) {
+                currentPage--;
+                filterEvents();
+            }
+        }
+
+        // Load My Events
+        async function loadMyEvents() {
+            if (!currentUser) return;
+            
+            const myEventsContainer = document.getElementById('myEventsContainer');
+            myEventsContainer.innerHTML = '<div style="text-align: center; padding: 2rem;"><i class="fas fa-spinner fa-spin"></i> Loading your events...</div>';
+            
+            try {
+                let myEvents = [];
+                
+                if (currentUser.role === 'organizer') {
+                    // Load events created by organizer
+                    const response = await fetch(`${API_BASE}/user/events/${currentUser.user_id}`);
+                    if (response.ok) {
+                        const result = await response.json();
+                        myEvents = result.events || [];
+                    }
+                } else {
+                    // Load events registered by attendee
+                    const registeredEvents = currentEvents.filter(event => 
+                        userRegistrations.some(reg => reg.event_id === event.event_id)
+                    );
+                    const waitlistedEvents = currentEvents.filter(event =>
+                        userWaitlists.some(wait => wait.event_id === event.event_id)
+                    );
+                    myEvents = [...registeredEvents, ...waitlistedEvents];
+                }
+                
+                filterMyEvents(myEvents);
+            } catch (error) {
+                console.error('Error loading my events:', error);
+                myEventsContainer.innerHTML = '<div style="text-align: center; padding: 2rem; color: red;">Error loading events</div>';
+            }
+        }
+
+        function filterMyEvents(events) {
+            const now = new Date();
+            let filteredEvents = events;
+
+            if (myEventsFilter === 'upcoming') {
+                filteredEvents = events.filter(event => new Date(event.date) > now);
+            } else if (myEventsFilter === 'past') {
+                filteredEvents = events.filter(event => new Date(event.date) < now);
+            }
+
+            displayMyEvents(filteredEvents);
+        }
+
+        function displayMyEvents(events) {
+            const myEventsContainer = document.getElementById('myEventsContainer');
+            
+            if (events.length === 0) {
+                myEventsContainer.innerHTML = `
+                    <div style="text-align: center; padding: 3rem; color: #666;">
+                        <i class="fas fa-calendar-times" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                        <h3>No events found</h3>
+                        <p>${currentUser.role === 'organizer' ? 'You haven\'t created any events yet.' : 'You haven\'t registered for any events yet.'}</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            myEventsContainer.innerHTML = '';
+            
+            events.forEach(event => {
+                const isOrganizer = currentUser.role === 'organizer';
+                const isPastEvent = new Date(event.date) < new Date();
+                const isRegistered = userRegistrations.some(reg => reg.event_id === event.event_id);
+                const isWaitlisted = userWaitlists.some(wait => wait.event_id === event.event_id);
+                const eventCard = document.createElement('div');
+                eventCard.className = `my-event-card ${isPastEvent ? 'past-event' : ''}`;
+                
+                // Get audience display text
+                const audienceText = {
+                    'pillai_students': 'Pillai Students Only',
+                    'college_students': 'College Students',
+                    'non_students': 'Non-College Students',
+                    'all': 'Everyone'
+                }[event.audience] || 'Everyone';
+                
+                eventCard.innerHTML = `
+                    <div class="event-image" style="background-color: var(--primary); ${event.image_url ? `background-image: url('${event.image_url}')` : ''}">
+                        ${!event.image_url ? `<i class="${event.icon || 'fas fa-calendar-alt'}"></i>` : ''}
+                    </div>
+                    <div class="event-content">
+                        <div class="event-date">
+                            <i class="far fa-calendar"></i> ${formatDate(event.date)}
+                            ${isPastEvent ? '<span style="color: #666;">(Past Event)</span>' : ''}
+                            ${isWaitlisted ? '<span style="color: var(--warning); margin-left: 10px;">(Waitlisted)</span>' : ''}
+                        </div>
+                        <h3 class="event-title">${event.title}</h3>
+                        <div class="event-location">
+                            <i class="fas fa-map-marker-alt"></i> ${event.location}
+                        </div>
+                        <p>${event.description}</p>
+                        <div class="event-audience" style="margin-bottom: 1rem; font-size: 0.9rem; color: #666;">
+                            <i class="fas fa-users"></i> ${audienceText}
+                        </div>
+                        <div class="event-footer">
+                            <div class="event-registered">${event.registered}/${event.capacity} registered</div>
+                            ${isOrganizer ? `
+                                <div class="event-actions">
+                                    <button class="btn btn-outline edit-btn" data-event-id="${event.event_id}" style="margin-right: 0.5rem;">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </button>
+                                    <button class="btn btn-danger delete-btn" data-event-id="${event.event_id}">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </div>
+                            ` : isRegistered ? `
+                                <div class="event-actions">
+                                    <button class="btn btn-danger unregister-btn" data-event-id="${event.event_id}">
+                                        <i class="fas fa-times"></i> Unregister
+                                    </button>
+                                </div>
+                            ` : isWaitlisted ? `
+                                <div class="event-actions">
+                                    <button class="btn btn-warning leave-waitlist-btn" data-event-id="${event.event_id}">
+                                        <i class="fas fa-times"></i> Leave Waitlist
+                                    </button>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+                
+                myEventsContainer.appendChild(eventCard);
+            });
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { 
+                month: 'short', 
+                day: 'numeric', 
+                year: 'numeric'
+            });
+        }
+
+        // Create new event - FIXED VERSION
+        async function createEvent(eventData) {
+            if (!currentUser || currentUser.role !== 'organizer') {
+                alert('❌ Only organizers can create events!');
+                return false;
+            }
+            
+            // Debug: Check current user
+            console.log('🔍 Current User:', currentUser);
+            console.log('🔍 Current User ID:', currentUser.user_id);
+            
+            if (!currentUser.user_id) {
+                alert('❌ User not properly authenticated. Please login again.');
+                return false;
+            }
+            
+            try {
+                // Validate time fields
+                if (!eventData.startHour || !eventData.startMinute || !eventData.startPeriod || 
+                    !eventData.endHour || !eventData.endMinute || !eventData.endPeriod) {
+                    alert('❌ Please select both start and end times');
+                    return false;
+                }
+
+                // Convert 12-hour format to 24-hour format
+                let startHour = parseInt(eventData.startHour);
+                if (eventData.startPeriod === 'PM' && startHour !== 12) {
+                    startHour += 12;
+                } else if (eventData.startPeriod === 'AM' && startHour === 12) {
+                    startHour = 0;
+                }
+                
+                let endHour = parseInt(eventData.endHour);
+                if (eventData.endPeriod === 'PM' && endHour !== 12) {
+                    endHour += 12;
+                } else if (eventData.endPeriod === 'AM' && endHour === 12) {
+                    endHour = 0;
+                }
+
+                // Format time to HH:MM:SS
+                const startTime = `${startHour.toString().padStart(2, '0')}:${eventData.startMinute}:00`;
+                const endTime = `${endHour.toString().padStart(2, '0')}:${eventData.endMinute}:00`;
+
+                // Combine date and time
+                const eventDateTime = `${eventData.date}T${startTime}`;
+                const eventEndDateTime = `${eventData.date}T${endTime}`;
+                const registrationDeadline = `${eventData.registrationDeadline}T23:59:59`;
+                
+                const eventPayload = {
+                    title: eventData.title,
+                    description: eventData.description,
+                    date: eventDateTime,
+                    end_time: eventEndDateTime,
+                    registration_deadline: registrationDeadline,
+                    location: eventData.location,
+                    capacity: parseInt(eventData.capacity),
+                    category: eventData.category,
+                    audience: eventData.audience,
+                    organizer_id: currentUser.user_id  // ✅ Use user_id instead of id
+                };
+                
+                console.log('📤 Sending event data:', eventPayload);
+                
+                const response = await fetch(`${API_BASE}/events/create`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(eventPayload)
+                });
+                
+                const result = await response.json();
+                console.log('Backend response:', result);
+                
+                if (response.ok) {
+                    alert('✅ Event created successfully!');
+                    await loadEvents();
+                    return true;
+                } else {
+                    alert('❌ Error: ' + (result.error || 'Unknown error'));
+                    return false;
+                }
+            } catch (error) {
+                console.error('Error creating event:', error);
+                alert('❌ Failed to create event. Check if backend is running!');
+                return false;
+            }
+        }
+
+        // Edit event
+        async function editEvent(eventId, eventData) {
+            try {
+                const response = await fetch(`${API_BASE}/events/update/${eventId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({...eventData, userId: currentUser.user_id})
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    alert('✅ Event updated successfully!');
+                    await loadEvents();
+                    await loadMyEvents();
+                    return true;
+                } else {
+                    alert('❌ ' + result.error);
+                    return false;
+                }
+            } catch (error) {
+                console.error('Error updating event:', error);
+                alert('❌ Failed to update event.');
+                return false;
+            }
+        }
+
+        // Open edit modal
+        function openEditModal(eventId) {
+            const event = currentEvents.find(e => e.event_id === eventId);
+            if (event) {
+                document.getElementById('editEventId').value = event.event_id;
+                document.getElementById('editEventTitle').value = event.title;
+                document.getElementById('editEventDescription').value = event.description;
+                document.getElementById('editEventLocation').value = event.location;
+                document.getElementById('editEventCapacity').value = event.capacity;
+                document.getElementById('editEventAudience').value = event.audience;
+                
+                // Format dates for inputs
+                const eventDate = new Date(event.date);
+                const formattedEventDate = eventDate.toISOString().split('T')[0];
+                document.getElementById('editEventDate').value = formattedEventDate;
+                
+                // Set time values
+                const startTime = new Date(event.date);
+                let startHour = startTime.getHours();
+                const startMinute = startTime.getMinutes().toString().padStart(2, '0');
+                const startPeriod = startHour >= 12 ? 'PM' : 'AM';
+                startHour = startHour % 12 || 12;
+                
+                document.getElementById('editStartHour').value = startHour;
+                document.getElementById('editStartMinute').value = startMinute;
+                document.getElementById('editStartPeriod').value = startPeriod;
+                
+                const endTime = new Date(event.end_time || new Date(event.date).setHours(startTime.getHours() + 2));
+                let endHour = endTime.getHours();
+                const endMinute = endTime.getMinutes().toString().padStart(2, '0');
+                const endPeriod = endHour >= 12 ? 'PM' : 'AM';
+                endHour = endHour % 12 || 12;
+                
+                document.getElementById('editEndHour').value = endHour;
+                document.getElementById('editEndMinute').value = endMinute;
+                document.getElementById('editEndPeriod').value = endPeriod;
+                
+                // Format registration deadline for date input
+                const deadlineDate = new Date(event.registration_deadline);
+                const formattedDeadline = deadlineDate.toISOString().split('T')[0];
+                document.getElementById('editRegistrationDeadline').value = formattedDeadline;
+                
+                document.getElementById('editEventModal').style.display = 'flex';
+            }
+        }
+
+        // Register for event
+        async function registerForEvent(eventId, userData) {
+            try {
+                const event = currentEvents.find(ev => ev.event_id === eventId);
+                
+                // Check if user can register based on audience
+                const userRole = currentUser.role;
+                const eventAudience = event.audience;
+                
+                let canRegister = false;
+                if (eventAudience === 'all') {
+                    canRegister = userRole !== 'organizer';
+                } else if (eventAudience === 'pillai_students') {
+                    canRegister = userRole === 'pillai_student';
+                } else if (eventAudience === 'college_students') {
+                    canRegister = userRole === 'pillai_student' || userRole === 'other_student';
+                } else if (eventAudience === 'non_students') {
+                    canRegister = userRole === 'non_student';
+                }
+                
+                if (!canRegister) {
+                    alert('❌ You are not eligible to register for this event based on the event audience restrictions.');
+                    return;
+                }
+                
+                const registrationData = {
+                    eventId: parseInt(eventId),
+                    userId: currentUser.user_id,
+                    ...userData
+                };
+                
+                console.log('Sending registration data:', registrationData);
+                
+                const response = await fetch(`${API_BASE}/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(registrationData)
+                });
+                
+                const result = await response.json();
+                console.log('Registration response:', result);
+                
+                if (response.ok) {
+                    alert('✅ ' + result.message);
+                    await loadUserRegistrations();
+                    await loadEvents();
+                    await loadMyEvents();
+                } else {
+                    alert('❌ ' + (result.message || result.error));
+                }
+            } catch (error) {
+                console.error('Error registering:', error);
+                alert('❌ Failed to register. Check backend connection!');
+            }
+        }
+
+        // Unregister from event
+        async function unregisterFromEvent(eventId) {
+            if (!currentUser) {
+                alert('❌ Please login first!');
+                return;
+            }
+            
+            if (!confirm('Are you sure you want to unregister from this event?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/unregister`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        eventId: parseInt(eventId),
+                        userId: currentUser.user_id
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    alert('✅ ' + result.message);
+                    await loadUserRegistrations();
+                    await loadEvents();
+                    await loadMyEvents();
+                } else {
+                    alert('❌ ' + result.error);
+                }
+            } catch (error) {
+                console.error('Error unregistering:', error);
+                alert('❌ Failed to unregister from event.');
+            }
+        }
+
+        // Join waitlist
+        async function joinWaitlist(eventId, userData) {
+            try {
+                const event = currentEvents.find(ev => ev.event_id === eventId);
+                
+                // Check if user can join waitlist based on audience
+                const userRole = currentUser.role;
+                const eventAudience = event.audience;
+                
+                let canJoin = false;
+                if (eventAudience === 'all') {
+                    canJoin = userRole !== 'organizer';
+                } else if (eventAudience === 'pillai_students') {
+                    canJoin = userRole === 'pillai_student';
+                } else if (eventAudience === 'college_students') {
+                    canJoin = userRole === 'pillai_student' || userRole === 'other_student';
+                } else if (eventAudience === 'non_students') {
+                    canJoin = userRole === 'non_student';
+                }
+                
+                if (!canJoin) {
+                    alert('❌ You are not eligible to join the waitlist for this event based on the event audience restrictions.');
+                    return;
+                }
+                
+                const waitlistData = {
+                    eventId: parseInt(eventId),
+                    userId: currentUser.user_id,
+                    ...userData
+                };
+                
+                console.log('Sending waitlist data:', waitlistData);
+                
+                const response = await fetch(`${API_BASE}/waitlist/join`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(waitlistData)
+                });
+                
+                const result = await response.json();
+                console.log('Waitlist response:', result);
+                
+                if (response.ok) {
+                    alert('✅ ' + result.message);
+                    await loadUserWaitlists();
+                    await loadEvents();
+                    await loadMyEvents();
+                } else {
+                    alert('❌ ' + (result.message || result.error));
+                }
+            } catch (error) {
+                console.error('Error joining waitlist:', error);
+                alert('❌ Failed to join waitlist. Check backend connection!');
+            }
+        }
+
+        // Leave waitlist
+        async function leaveWaitlist(eventId) {
+            if (!currentUser) {
+                alert('❌ Please login first!');
+                return;
+            }
+            
+            if (!confirm('Are you sure you want to leave the waitlist for this event?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/waitlist/leave`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        },
+                    body: JSON.stringify({
+                        eventId: parseInt(eventId),
+                        userId: currentUser.user_id
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    alert('✅ ' + result.message);
+                    await loadUserWaitlists();
+                    await loadEvents();
+                    await loadMyEvents();
+                } else {
+                    alert('❌ ' + result.error);
+                }
+            } catch (error) {
+                console.error('Error leaving waitlist:', error);
+                alert('❌ Failed to leave waitlist.');
+            }
+        }
+
+        // Delete event
+        async function deleteEvent(eventId) {
+            if (!currentUser) {
+                alert('❌ Please login first!');
+                return;
+            }
+            
+            if (!confirm('Are you sure you want to delete this event?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/events/delete/${eventId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        },
+                    body: JSON.stringify({ userId: currentUser.user_id })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    alert('✅ ' + result.message);
+                    await loadEvents();
+                    await loadMyEvents();
+                } else {
+                    alert('❌ ' + result.error);
+                }
+            } catch (error) {
+                console.error('Error deleting event:', error);
+                alert('❌ Failed to delete event.');
+            }
+        }
+
+        // Show organizer alert
+        function showOrganizerAlert() {
+            document.getElementById('organizerAlert').style.display = 'flex';
+        }
+
+        // Initialize all event listeners
+        function initializeEventListeners() {
+            // Navigation
+            document.getElementById('homeLink').addEventListener('click', (e) => {
+                e.preventDefault();
+                showHomeSection();
+            });
+            
+            document.getElementById('myEventsLink').addEventListener('click', (e) => {
+                e.preventDefault();
+                showMyEventsSection();
+            });
+
+            // Auth buttons
+            document.getElementById('loginBtn').addEventListener('click', () => {
+                document.getElementById('loginModal').style.display = 'flex';
+            });
+            
+            document.getElementById('signupBtn').addEventListener('click', () => {
+                document.getElementById('signupModal').style.display = 'flex';
+            });
+
+            // Search functionality
+            document.getElementById('searchBtn').addEventListener('click', searchEvents);
+            document.getElementById('searchInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    searchEvents();
+                }
+            });
+
+            // Calendar functionality
+            document.getElementById('calendarBtn').addEventListener('click', () => {
+                const calendarModal = document.getElementById('calendarModal');
+                calendarModal.style.display = calendarModal.style.display === 'block' ? 'none' : 'block';
+            });
+
+            document.getElementById('prevMonth').addEventListener('click', () => {
+                currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
+                generateCalendar();
+            });
+
+            document.getElementById('nextMonth').addEventListener('click', () => {
+                currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);
+                generateCalendar();
+            });
+
+            // Grid navigation
+            document.getElementById('nextPage').addEventListener('click', nextPage);
+            document.getElementById('prevPage').addEventListener('click', prevPage);
+
+            // Close calendar when clicking outside
+            document.addEventListener('click', (e) => {
+                const calendarModal = document.getElementById('calendarModal');
+                const calendarBtn = document.getElementById('calendarBtn');
+                if (!calendarModal.contains(e.target) && !calendarBtn.contains(e.target)) {
+                    calendarModal.style.display = 'none';
+                }
+            });
+
+            // Create event form
+            const createEventForm = document.getElementById('createEventForm');
+            if (createEventForm) {
+                createEventForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    
+                    const eventData = {
+                        title: document.getElementById('eventTitle').value,
+                        description: document.getElementById('eventDescription').value,
+                        date: document.getElementById('eventDate').value,
+                        startHour: document.getElementById('startHour').value,
+                        startMinute: document.getElementById('startMinute').value,
+                        startPeriod: document.getElementById('startPeriod').value,
+                        endHour: document.getElementById('endHour').value,
+                        endMinute: document.getElementById('endMinute').value,
+                        endPeriod: document.getElementById('endPeriod').value,
+                        registrationDeadline: document.getElementById('registrationDeadline').value,
+                        location: document.getElementById('eventLocation').value,
+                        capacity: parseInt(document.getElementById('eventCapacity').value),
+                        category: document.getElementById('eventCategory').value,
+                        audience: document.getElementById('eventAudience').value
+                    };
+                    
+                    const success = await createEvent(eventData);
+                    if (success) {
+                        document.getElementById('createEventModal').style.display = 'none';
+                        e.target.reset();
+                        document.getElementById('imagePreview').style.display = 'none';
+                        document.getElementById('removeImage').style.display = 'none';
+                    }
+                });
+            }
+
+            // Edit event form
+            const editEventForm = document.getElementById('editEventForm');
+            if (editEventForm) {
+                editEventForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    
+                    const eventId = parseInt(document.getElementById('editEventId').value);
+                    
+                    // Convert 12-hour format to 24-hour format
+                    let startHour = parseInt(document.getElementById('editStartHour').value);
+                    const startPeriod = document.getElementById('editStartPeriod').value;
+                    if (startPeriod === 'PM' && startHour !== 12) {
+                        startHour += 12;
+                    } else if (startPeriod === 'AM' && startHour === 12) {
+                        startHour = 0;
+                    }
+                    
+                    let endHour = parseInt(document.getElementById('editEndHour').value);
+                    const endPeriod = document.getElementById('editEndPeriod').value;
+                    if (endPeriod === 'PM' && endHour !== 12) {
+                        endHour += 12;
+                    } else if (endPeriod === 'AM' && endHour === 12) {
+                        endHour = 0;
+                    }
+
+                    // Format time to HH:MM
+                    const startMinute = document.getElementById('editStartMinute').value;
+                    const endMinute = document.getElementById('editEndMinute').value;
+                    const startTime = `${startHour.toString().padStart(2, '0')}:${startMinute}`;
+                    const endTime = `${endHour.toString().padStart(2, '0')}:${endMinute}`;
+
+                    // Combine date and start time for the event
+                    const eventDate = document.getElementById('editEventDate').value;
+                    const eventDateTime = new Date(eventDate + 'T' + startTime);
+                    const formattedDate = eventDateTime.toISOString();
+                    
+                    const eventData = {
+                        title: document.getElementById('editEventTitle').value,
+                        description: document.getElementById('editEventDescription').value,
+                        date: formattedDate,
+                        end_time: new Date(eventDate + 'T' + endTime).toISOString(),
+                        location: document.getElementById('editEventLocation').value,
+                        capacity: parseInt(document.getElementById('editEventCapacity').value),
+                        audience: document.getElementById('editEventAudience').value,
+                        registration_deadline: document.getElementById('editRegistrationDeadline').value + 'T23:59:59'
+                    };
+                    
+                    const success = await editEvent(eventId, eventData);
+                    if (success) {
+                        document.getElementById('editEventModal').style.display = 'none';
+                    }
+                });
+            }
+
+            // Login form
+            const loginForm = document.getElementById('loginForm');
+            if (loginForm) {
+                loginForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const email = document.getElementById('loginEmail').value;
+                    const password = document.getElementById('loginPassword').value;
+                    await loginUser(email, password);
+                });
+            }
+
+            // Signup form - Role selection handler
+            const userRole = document.getElementById('userRole');
+            if (userRole) {
+                userRole.addEventListener('change', function() {
+                    const role = this.value;
+                    const pillaiStudentFields = document.getElementById('pillaiStudentFields');
+                    const otherCollegeFields = document.getElementById('otherCollegeFieldsSignup');
+                    const otherStudentIdFields = document.getElementById('otherStudentIdFields');
+                    
+                    // Reset all fields
+                    pillaiStudentFields.style.display = 'none';
+                    otherCollegeFields.style.display = 'none';
+                    otherStudentIdFields.style.display = 'none';
+                    
+                    // Clear required attributes
+                    document.getElementById('pillaiStudentId').required = false;
+                    document.getElementById('collegeNameSignup').required = false;
+                    document.getElementById('otherStudentId').required = false;
+                    
+                    if (role === 'pillai_student') {
+                        // Pillai student - show student ID field
+                        pillaiStudentFields.style.display = 'block';
+                        document.getElementById('pillaiStudentId').required = true;
+                    } else if (role === 'other_student') {
+                        // Other college student - show college name and student ID
+                        otherCollegeFields.style.display = 'block';
+                        otherStudentIdFields.style.display = 'block';
+                        document.getElementById('collegeNameSignup').required = true;
+                        document.getElementById('otherStudentId').required = true;
+                    }
+                    // For organizer and non_student, no additional fields
+                });
+            }
+
+            // Signup form
+            const signupForm = document.getElementById('signupForm');
+            if (signupForm) {
+                signupForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    
+                    const role = document.getElementById('userRole').value;
+                    let studentId = '';
+                    let collegeName = '';
+                    
+                    if (role === 'pillai_student') {
+                        studentId = document.getElementById('pillaiStudentId').value;
+                        collegeName = 'Pillai College';
+                    } else if (role === 'other_student') {
+                        studentId = document.getElementById('otherStudentId').value;
+                        collegeName = document.getElementById('collegeNameSignup').value;
+                    }
+                    
+                    const userData = {
+                        name: document.getElementById('signupName').value,
+                        email: document.getElementById('signupEmail').value,
+                        password: document.getElementById('signupPassword').value,
+                        role: role,
+                        collegeName: collegeName,
+                        studentId: studentId
+                    };
+                    
+                    await signupUser(userData);
+                });
+            }
+
+            // Registration form - Role-based field handling
+            const registrationForm = document.getElementById('registrationForm');
+            if (registrationForm) {
+                registrationForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    
+                    const eventId = parseInt(e.target.getAttribute('data-event-id'));
+                    const userData = {
+                        name: document.getElementById('fullName').value,
+                        email: document.getElementById('email').value,
+                        collegeName: document.getElementById('collegeName').value || 'Pillai College',
+                        studentId: document.getElementById('studentId').value
+                    };
+                    
+                    // Check if it's a waitlist registration
+                    const isWaitlist = e.target.getAttribute('data-waitlist') === 'true';
+                    
+                    if (isWaitlist) {
+                        await joinWaitlist(eventId, userData);
+                    } else {
+                        await registerForEvent(eventId, userData);
+                    }
+                    
+                    document.getElementById('registrationModal').style.display = 'none';
+                    e.target.reset();
+                });
+            }
+
+            // Close modals
+            const closeModal = document.querySelectorAll('.close-modal');
+            closeModal.forEach(closeBtn => {
+                closeBtn.addEventListener('click', () => {
+                    document.getElementById('registrationModal').style.display = 'none';
+                    document.getElementById('createEventModal').style.display = 'none';
+                    document.getElementById('editEventModal').style.display = 'none';
+                    document.getElementById('loginModal').style.display = 'none';
+                    document.getElementById('signupModal').style.display = 'none';
+                });
+            });
+
+            // Cancel buttons
+            const cancelBtn = document.getElementById('cancelBtn');
+            if (cancelBtn) {
+                cancelBtn.addEventListener('click', () => {
+                    document.getElementById('registrationModal').style.display = 'none';
+                });
+            }
+
+            const cancelCreateBtn = document.getElementById('cancelCreateBtn');
+            if (cancelCreateBtn) {
+                cancelCreateBtn.addEventListener('click', () => {
+                    document.getElementById('createEventModal').style.display = 'none';
+                });
+            }
+
+            const cancelEditBtn = document.getElementById('cancelEditBtn');
+            if (cancelEditBtn) {
+                cancelEditBtn.addEventListener('click', () => {
+                    document.getElementById('editEventModal').style.display = 'none';
+                });
+            }
+
+            const cancelLoginBtn = document.getElementById('cancelLoginBtn');
+            if (cancelLoginBtn) {
+                cancelLoginBtn.addEventListener('click', () => {
+                    document.getElementById('loginModal').style.display = 'none';
+                });
+            }
+
+            const cancelSignupBtn = document.getElementById('cancelSignupBtn');
+            if (cancelSignupBtn) {
+                cancelSignupBtn.addEventListener('click', () => {
+                    document.getElementById('signupModal').style.display = 'none';
+                });
+            }
+
+            // Create event button
+            const createEventBtn = document.getElementById('createEventBtn');
+            if (createEventBtn) {
+                createEventBtn.addEventListener('click', () => {
+                    if (!currentUser || currentUser.role !== 'organizer') {
+                        alert('❌ Only organizers can create events! Please login as an organizer.');
+                        document.getElementById('loginModal').style.display = 'flex';
+                        return;
+                    }
+                    document.getElementById('createEventModal').style.display = 'flex';
+                });
+            }
+
+            // Alert OK button
+            const alertOkBtn = document.getElementById('alertOkBtn');
+            if (alertOkBtn) {
+                alertOkBtn.addEventListener('click', () => {
+                    document.getElementById('organizerAlert').style.display = 'none';
+                });
+            }
+
+            // Image upload functionality
+            const imageUpload = document.getElementById('imageUpload');
+            const eventImageInput = document.getElementById('eventImage');
+            const imagePreview = document.getElementById('imagePreview');
+            const previewImage = imagePreview.querySelector('img');
+            const removeImageBtn = document.getElementById('removeImage');
+
+            if (imageUpload && eventImageInput) {
+                // Click to upload
+                imageUpload.addEventListener('click', () => {
+                    eventImageInput.click();
+                });
+
+                // File selection
+                eventImageInput.addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        // Validate file type
+                        if (!file.type.startsWith('image/')) {
+                            alert('❌ Please select a valid image file (PNG, JPG, JPEG)');
+                            return;
+                        }
+
+                        // Validate file size (5MB)
+                        if (file.size > 5 * 1024 * 1024) {
+                            alert('❌ Image size should be less than 5MB');
+                            return;
+                        }
+
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            previewImage.src = e.target.result;
+                            imagePreview.style.display = 'block';
+                            removeImageBtn.style.display = 'block';
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+
+                // Drag and drop functionality
+                imageUpload.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    imageUpload.classList.add('dragover');
+                });
+
+                imageUpload.addEventListener('dragleave', () => {
+                    imageUpload.classList.remove('dragover');
+                });
+
+                imageUpload.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    imageUpload.classList.remove('dragover');
+                    
+                    const file = e.dataTransfer.files[0];
+                    if (file && file.type.startsWith('image/')) {
+                        eventImageInput.files = e.dataTransfer.files;
+                        
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            previewImage.src = e.target.result;
+                            imagePreview.style.display = 'block';
+                            removeImageBtn.style.display = 'block';
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        alert('❌ Please drop a valid image file');
+                    }
+                });
+
+                // Remove image
+                removeImageBtn.addEventListener('click', () => {
+                    eventImageInput.value = '';
+                    previewImage.src = '';
+                    imagePreview.style.display = 'none';
+                    removeImageBtn.style.display = 'none';
+                });
+            }
+
+            // Modal navigation
+            const showSignup = document.getElementById('showSignup');
+            if (showSignup) {
+                showSignup.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    document.getElementById('loginModal').style.display = 'none';
+                    document.getElementById('signupModal').style.display = 'flex';
+                });
+            }
+
+            const showLogin = document.getElementById('showLogin');
+            if (showLogin) {
+                showLogin.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    document.getElementById('signupModal').style.display = 'none';
+                    document.getElementById('loginModal').style.display = 'flex';
+                });
+            }
+
+            // Filter buttons for events
+            const eventFilterButtons = document.querySelectorAll('#eventsSection .filter-btn');
+            eventFilterButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    eventFilterButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    currentFilter = button.getAttribute('data-filter');
+                    currentPage = 0; // Reset to first page when filter changes
+                    filterEvents();
+                });
+            });
+
+            // Filter buttons for my events
+            const myEventsFilterButtons = document.querySelectorAll('#myEventsSection .filter-btn');
+            myEventsFilterButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    myEventsFilterButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    myEventsFilter = button.getAttribute('data-filter');
+                    loadMyEvents();
+                });
+            });
+
+            // Window click to close modals
+            window.addEventListener('click', (event) => {
+                if (event.target === document.getElementById('registrationModal')) {
+                    document.getElementById('registrationModal').style.display = 'none';
+                }
+                if (event.target === document.getElementById('createEventModal')) {
+                    document.getElementById('createEventModal').style.display = 'none';
+                }
+                if (event.target === document.getElementById('editEventModal')) {
+                    document.getElementById('editEventModal').style.display = 'none';
+                }
+                if (event.target === document.getElementById('loginModal')) {
+                    document.getElementById('loginModal').style.display = 'none';
+                }
+                if (event.target === document.getElementById('signupModal')) {
+                    document.getElementById('signupModal').style.display = 'none';
+                }
+                if (event.target === document.getElementById('organizerAlert')) {
+                    document.getElementById('organizerAlert').style.display = 'none';
+                }
+            });
+
+            // Event delegation for dynamic buttons
+            document.addEventListener('click', function(e) {
+                // Edit button handler
+                if (e.target.classList.contains('edit-btn') || e.target.closest('.edit-btn')) {
+                    const editBtn = e.target.classList.contains('edit-btn') ? e.target : e.target.closest('.edit-btn');
+                    const eventId = parseInt(editBtn.getAttribute('data-event-id'));
+                    openEditModal(eventId);
+                }
+                
+                // Delete button handler
+                if (e.target.classList.contains('delete-btn') || e.target.closest('.delete-btn')) {
+                    const deleteBtn = e.target.classList.contains('delete-btn') ? e.target : e.target.closest('.delete-btn');
+                    const eventId = parseInt(deleteBtn.getAttribute('data-event-id'));
+                    deleteEvent(eventId);
+                }
+                
+                // Unregister button handler
+                if (e.target.classList.contains('unregister-btn') || e.target.closest('.unregister-btn')) {
+                    const unregisterBtn = e.target.classList.contains('unregister-btn') ? e.target : e.target.closest('.unregister-btn');
+                    const eventId = parseInt(unregisterBtn.getAttribute('data-event-id'));
+                    unregisterFromEvent(eventId);
+                }
+                
+                // Leave waitlist button handler
+                if (e.target.classList.contains('leave-waitlist-btn') || e.target.closest('.leave-waitlist-btn')) {
+                    const leaveBtn = e.target.classList.contains('leave-waitlist-btn') ? e.target : e.target.closest('.leave-waitlist-btn');
+                    const eventId = parseInt(leaveBtn.getAttribute('data-event-id'));
+                    leaveWaitlist(eventId);
+                }
+                
+                // Register button handler
+                if (e.target.classList.contains('register-btn') || e.target.closest('.register-btn')) {
+                    const registerBtn = e.target.classList.contains('register-btn') ? e.target : e.target.closest('.register-btn');
+                    if (!currentUser) {
+                        alert('❌ Please login first to register for events!');
+                        document.getElementById('loginModal').style.display = 'flex';
+                        return;
+                    }
+                    
+                    // Check if user is organizer
+                    if (currentUser.role === 'organizer') {
+                        showOrganizerAlert();
+                        return;
+                    }
+                    
+                    const eventId = parseInt(registerBtn.getAttribute('data-event-id'));
+                    const event = currentEvents.find(ev => ev.event_id === eventId);
+                    
+                    if (event) {
+                        document.getElementById('eventName').value = event.title;
+                        
+                        // Show/hide fields based on user role
+                        const otherCollegeFields = document.getElementById('otherCollegeFields');
+                        const studentIdGroup = document.getElementById('studentIdGroup');
+                        
+                        // Reset all fields
+                        otherCollegeFields.style.display = 'none';
+                        studentIdGroup.style.display = 'none';
+                        
+                        if (currentUser.role === 'other_student') {
+                            // Other college student - show college name and student ID
+                            otherCollegeFields.style.display = 'block';
+                            studentIdGroup.style.display = 'block';
+                        } else if (currentUser.role === 'pillai_student') {
+                            // Pillai student - show only student ID
+                            studentIdGroup.style.display = 'block';
+                        }
+                        // For non_student, no additional fields
+                        
+                        // Pre-fill form with user data if logged in
+                        if (currentUser) {
+                            document.getElementById('fullName').value = currentUser.name;
+                            document.getElementById('email').value = currentUser.email;
+                            if (currentUser.collegeName && currentUser.role === 'other_student') {
+                                document.getElementById('collegeName').value = currentUser.collegeName;
+                            }
+                            if (currentUser.studentId) {
+                                document.getElementById('studentId').value = currentUser.studentId;
+                            }
+                        }
+                        
+                        document.getElementById('registrationModal').style.display = 'flex';
+                        
+                        // Store the event ID for registration
+                        document.getElementById('registrationForm').setAttribute('data-event-id', eventId);
+                        document.getElementById('registrationForm').setAttribute('data-waitlist', 'false');
+                    }
+                }
+                
+                // Join waitlist button handler
+                if (e.target.classList.contains('join-waitlist-btn') || e.target.closest('.join-waitlist-btn')) {
+                    const waitlistBtn = e.target.classList.contains('join-waitlist-btn') ? e.target : e.target.closest('.join-waitlist-btn');
+                    if (!currentUser) {
+                        alert('❌ Please login first to join waitlist!');
+                        document.getElementById('loginModal').style.display = 'flex';
+                        return;
+                    }
+                    
+                    // Check if user is organizer
+                    if (currentUser.role === 'organizer') {
+                        showOrganizerAlert();
+                        return;
+                    }
+                    
+                    const eventId = parseInt(waitlistBtn.getAttribute('data-event-id'));
+                    const event = currentEvents.find(ev => ev.event_id === eventId);
+                    
+                    if (event) {
+                        document.getElementById('eventName').value = event.title;
+                        
+                        // Show/hide fields based on user role
+                        const otherCollegeFields = document.getElementById('otherCollegeFields');
+                        const studentIdGroup = document.getElementById('studentIdGroup');
+                        
+                        // Reset all fields
+                        otherCollegeFields.style.display = 'none';
+                        studentIdGroup.style.display = 'none';
+                        
+                        if (currentUser.role === 'other_student') {
+                            // Other college student - show college name and student ID
+                            otherCollegeFields.style.display = 'block';
+                            studentIdGroup.style.display = 'block';
+                        } else if (currentUser.role === 'pillai_student') {
+                            // Pillai student - show only student ID
+                            studentIdGroup.style.display = 'block';
+                        }
+                        // For non_student, no additional fields
+                        
+                        // Pre-fill form with user data if logged in
+                        if (currentUser) {
+                            document.getElementById('fullName').value = currentUser.name;
+                            document.getElementById('email').value = currentUser.email;
+                            if (currentUser.collegeName && currentUser.role === 'other_student') {
+                                document.getElementById('collegeName').value = currentUser.collegeName;
+                            }
+                            if (currentUser.studentId) {
+                                document.getElementById('studentId').value = currentUser.studentId;
+                            }
+                        }
+                        
+                        document.getElementById('registrationModal').style.display = 'flex';
+                        
+                        // Store the event ID for waitlist
+                        document.getElementById('registrationForm').setAttribute('data-event-id', eventId);
+                        document.getElementById('registrationForm').setAttribute('data-waitlist', 'true');
+                    }
+                }
+            });
+        }
+
+        // Load events when page loads and initialize UI
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeEventListeners();
+            loadEvents();
+            updateUIForUser();
+            generateCalendar(); // Initialize calendar
+        });
+    </script>
+</body>
+</html>
